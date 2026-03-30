@@ -47,11 +47,7 @@ Represents the person managing the pet's care.
 
 #### Attributes:
 - **name** - owner's name
-- **available_time** - total minutes available today
-- **pet** - the associated Pet object
-
-#### Methods:
-- **set_available_time(minutes)** - update available time for the day
+- **pets** - list of Pet objects
 
 
 
@@ -59,11 +55,11 @@ Represents the person managing the pet's care.
 Produces a daily care plan based on constraints and priorities.
 
 #### Attributes:
-- **owner** - the Owner (gives access to time constraint and pet tasks)
-- **schedule** - ordered list of tasks selected for the day
+- **owner** - the Owner (gives access to pet tasks)
+- **schedule** - ordered list of scheduled tasks
 
 #### Methods:
-- **generate_plan()** - picks and orders tasks that fit within available_time, prioritizing high-priority ones
+- **generate_plan()** - picks and orders incomplete tasks by priority
 - **explain_plan()** - returns a human-readable explanation of why each task was included or excluded
 - **total_duration()** - sum of all scheduled task durations
 
@@ -86,6 +82,8 @@ Produces a daily care plan based on constraints and priorities.
 
 - Describe one tradeoff your scheduler makes.
 - Why is that tradeoff reasonable for this scenario?
+
+The scheduler uses a lightweight conflict check that flags tasks only when they start at the exact same HH:MM timestamp. It does not compute full time-range overlap using duration (for example, 08:00-08:30 overlapping 08:20-08:40). This tradeoff is reasonable for this project because it keeps the logic simple and fast, still catches the most obvious collisions, and surfaces warnings without blocking the user from continuing to plan tasks.
 
 ---
 

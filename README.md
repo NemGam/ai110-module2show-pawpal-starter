@@ -22,6 +22,14 @@ Your final app should:
 - Display the plan clearly (and ideally explain the reasoning)
 - Include tests for the most important scheduling behaviors
 
+## Smarter Scheduling
+
+Recent updates make scheduling more practical and easier to use:
+
+- Card-based task UI: scheduled tasks are displayed as cards with a built-in `Mark complete` action.
+- Recurring task rollover: completing `daily` or `weekly` tasks rolls them forward in place instead of leaving stale completed duplicates.
+- Time conflict warnings: the scheduler detects tasks scheduled at the same start time (same pet or different pets) and shows lightweight warnings in both CLI output and the Streamlit UI.
+
 ## Getting started
 
 ### Setup
