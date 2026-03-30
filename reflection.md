@@ -2,10 +2,71 @@
 
 ## 1. System Design
 
+- User should be able to see the schedule for today
+- User should be able to assign constraints and priorities
+- User should be able to change schedule for today
+
+
 **a. Initial design**
 
 - Briefly describe your initial UML design.
-- What classes did you include, and what responsibilities did you assign to each?
+
+### **Task**
+Represents a single pet care activity.
+
+#### Attributes:
+
+- **title** - name of the task (e.g., "Morning walk")
+- **duration** - how many minutes it takes
+- **priority** - importance level (high / medium / low)
+- **category** - type of care (walk, feeding, meds, grooming, enrichment)
+- **completed** - whether it's been done today
+#### Methods:
+- **is_high_priority()** - returns True if priority is high
+- **to_dict() / from_dict()** - for serialization (Streamlit session state)
+
+
+
+### **Pet**
+Represents the animal being cared for.
+
+#### Attributes:
+- **name** - pet's name
+- **species** - dog, cat, or other
+- **tasks** - list of Task objects assigned to this pet
+
+#### Methods:
+- **add_task(task)** - adds a task to the list
+- **remove_task(title)** - removes a task by name
+- **get_tasks_by_priority()** - returns tasks sorted by priority
+
+
+
+### **Owner**
+Represents the person managing the pet's care.
+
+#### Attributes:
+- **name** - owner's name
+- **available_time** - total minutes available today
+- **pet** - the associated Pet object
+
+#### Methods:
+- **set_available_time(minutes)** - update available time for the day
+
+
+
+### **Scheduler**
+Produces a daily care plan based on constraints and priorities.
+
+#### Attributes:
+- **owner** - the Owner (gives access to time constraint and pet tasks)
+- **schedule** - ordered list of tasks selected for the day
+
+#### Methods:
+- **generate_plan()** - picks and orders tasks that fit within available_time, prioritizing high-priority ones
+- **explain_plan()** - returns a human-readable explanation of why each task was included or excluded
+- **total_duration()** - sum of all scheduled task durations
+
 
 **b. Design changes**
 
