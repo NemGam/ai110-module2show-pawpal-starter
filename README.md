@@ -22,13 +22,17 @@ Your final app should:
 - Display the plan clearly (and ideally explain the reasoning)
 - Include tests for the most important scheduling behaviors
 
-## Smarter Scheduling
+## Features
 
-Recent updates make scheduling more practical and easier to use:
-
-- Card-based task UI: scheduled tasks are displayed as cards with a built-in `Mark complete` action.
-- Recurring task rollover: completing `daily` or `weekly` tasks rolls them forward in place instead of leaving stale completed duplicates.
-- Time conflict warnings: the scheduler detects tasks scheduled at the same start time (same pet or different pets) and shows lightweight warnings in both CLI output and the Streamlit UI.
+- Priority-based planning: `generate_plan()` sorts incomplete tasks by priority (`high` -> `medium` -> `low`) and then by pet name.
+- Sorting by time: `build_time_schedule()` orders tasks chronologically (overdue first), using `due_at` when present and falling back to `HH:MM`.
+- Auto planning window selection: `recommend_planning_window()` chooses `weekly` vs `monthly` based on upcoming due-date spread.
+- Window-aware scheduling: time schedules include only tasks within the selected horizon (`7` days for weekly, `30` days for monthly).
+- Conflict warnings: `detect_time_conflicts()` flags tasks that share the same scheduled start timestamp.
+- Daily/weekly recurrence rollover: completing `daily` or `weekly` tasks creates the next occurrence instead of marking the old one complete.
+- Completion workflow for one-time tasks: non-recurring tasks are marked complete and excluded from future schedules.
+- Schedule filtering: supports filtering scheduled tasks by completion status and/or pet name.
+- Total workload summary: `total_duration()` reports total planned minutes for the active schedule.
 
 ## Getting started
 
@@ -49,3 +53,20 @@ pip install -r requirements.txt
 5. Add tests to verify key behaviors.
 6. Connect your logic to the Streamlit UI in `app.py`.
 7. Refine UML so it matches what you actually built.
+
+## Testing PawPal+
+
+Run the full test suite with:
+
+```bash
+python -m pytest
+```
+
+The tests cover:
+
+- Priority-based scheduling order
+- Chronological sorting for time-based schedules
+- Recurring task rollover for `daily` and `weekly` tasks
+- Time conflict detection for duplicate task times
+
+Confidence Level (based on latest test run): `4/5 stars`

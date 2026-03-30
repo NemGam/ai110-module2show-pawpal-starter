@@ -198,17 +198,30 @@ def test_recommend_planning_window_monthly_for_far_tasks():
     assert recommended == "monthly"
 
 
-def test_build_time_schedule_includes_multiple_same_day_tasks():
+def test_build_time_schedule_sorts_chronologically_even_when_priority_differs():
     owner = Owner(name="Alex")
     pet = Pet(name="Buddy", species="dog")
-    pet.add_task(make_task(title="A", duration=20, priority="high", due_at="2026-03-30 08:00"))
-    pet.add_task(make_task(title="B", duration=20, priority="medium", due_at="2026-03-30 09:00"))
+    pet.add_task(make_task(title="Later high", duration=20, priority="high", due_at="2026-03-30 09:00"))
+    pet.add_task(make_task(title="Earlier low", duration=20, priority="low", due_at="2026-03-30 08:00"))
     owner.add_pet(pet)
     scheduler = Scheduler(owner=owner)
 
     selected_pairs = scheduler.build_time_schedule(window="weekly", start=datetime(2026, 3, 30, 7, 0))
     selected_titles = [task.title for _, task in selected_pairs]
-    assert selected_titles == ["A", "B"]
+    assert selected_titles == ["Earlier low", "Later high"]
+
+
+def test_sort_by_time_returns_tasks_in_hhmm_order():
+    scheduler = make_scheduler([
+        make_task(title="Noon", priority="high", time="12:00"),
+        make_task(title="Morning", priority="medium", time="08:30"),
+        make_task(title="Early", priority="low", time="07:45"),
+    ])
+    scheduler.generate_plan()
+
+    ordered = scheduler.sort_by_time()
+    titles = [task.title for task in ordered]
+    assert titles == ["Early", "Morning", "Noon"]
 
 
 # --- Scheduler: multi-pet global priority ---

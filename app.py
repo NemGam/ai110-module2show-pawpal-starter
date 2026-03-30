@@ -38,6 +38,13 @@ def complete_task_in_session(pets_data: list[dict], pet_idx: int, task_idx: int)
     pets_data[pet_idx]["tasks"][task_idx] = {**existing_task, "completed": True}
 
 
+def remove_task_in_session(pets_data: list[dict], pet_idx: int, task_idx: int) -> None:
+    """Remove a task from the selected pet's task list by index."""
+    tasks = pets_data[pet_idx].get("tasks", [])
+    if 0 <= task_idx < len(tasks):
+        tasks.pop(task_idx)
+
+
 def render_task_card(
     row: dict,
     pets_data: list[dict],
@@ -48,14 +55,20 @@ def render_task_card(
     """Render one scheduled task as a card with a completion action."""
     due_label = row["due_at"] if row["due_at"] else row["time"]
     with st.container(border=True):
-        top_left, top_right = st.columns([6, 1])
+        top_left, top_right = st.columns([4, 3])
         with top_left:
             st.markdown(f"**{row['title']}**")
             st.caption(f"{row['pet_name']} ({row['species']}) | {row['category']} | {row['due_bucket']}")
         with top_right:
-            if st.button("Mark complete", key=card_key):
-                complete_task_in_session(pets_data, pet_idx, task_idx)
-                st.rerun()
+            action_col1, action_col2 = st.columns([3, 2])
+            with action_col1:
+                if st.button("Mark complete", key=f"{card_key}_complete", use_container_width=True):
+                    complete_task_in_session(pets_data, pet_idx, task_idx)
+                    st.rerun()
+            with action_col2:
+                if st.button("Remove", key=f"{card_key}_remove", use_container_width=True):
+                    remove_task_in_session(pets_data, pet_idx, task_idx)
+                    st.rerun()
 
         c1, c2, c3, c4 = st.columns(4)
         with c1:
